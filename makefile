@@ -1,12 +1,8 @@
 CC=gcc
 CFLAGS = -Wall
 
-all: clean client server helpers.o
-
-client: helpers.o
+all: helpers.o
 	$(CC) $(FLAGS) client.c $^ -o client
-
-server: helpers.o
 	$(CC) $(FLAGS) server.c $^ -o server
 
 helpers.o:
