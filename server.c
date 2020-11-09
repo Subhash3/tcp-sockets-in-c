@@ -122,6 +122,7 @@ void bindSocket(struct sockaddr_in *address, int socketFD)
 void listenForConnections(int serverSocketFd)
 {
     int flag, clientSocketFd;
+    int pid;
 
     printf("listening for connections...\n");
 
@@ -142,7 +143,18 @@ void listenForConnections(int serverSocketFd)
         inet_ntop(AF_INET, &addr, clientAddress, MAX_STR_LEN);
         printf("Connection Established. Client Address: %s, socket FD: %d\n", clientAddress, clientSocketFd);
 
-        handleConnection(clientSocketFd);
+        // Create a child process for that client
+        pid = fork();
+        if (pid < 0)
+        {
+            errorHandler("Failed to create child process\n");
+        }
+        else if (pid == 0)
+        {
+            // Child process
+            printf("Child process: FD: %d\n", clientSocketFd);
+            handleConnection(clientSocketFd);
+        }
     }
 }
 
