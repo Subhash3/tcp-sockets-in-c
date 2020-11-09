@@ -19,3 +19,10 @@ The problem is to implement a client - server user-level application using socke
 - SERVER_PORT is hardcoded to 12345 in ```server.c```, feel free to change it to whatever you'd like.
 
 
+##### To Do List
+- [x] Create Server.
+- [x] Create Client.
+- [x] One to One communication.
+- [x] String Reversal.
+- [x] Fork the server and assign the child process to the newly connected client.
+- [ ] Use threads to work woth clients parallely.
