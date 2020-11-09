@@ -148,20 +148,21 @@ void handleConnection(int clientSocketFd)
 {
     char response[MAX_STR_LEN];
 
+    sendStuff(clientSocketFd, WELCOME_MESSAAGE);
     receiveStuff(clientSocketFd, response);
     printf("[Client]: %s\n", response);
-    sendStuff(clientSocketFd, WELCOME_MESSAAGE);
 
     close(clientSocketFd);
+
+    return;
 }
 
 void receiveStuff(int socketFD, char *string)
 {
     int n;
 
-    // memset(string, 0, MAX_STR_LEN);
+    memset(string, 0, MAX_STR_LEN);
     n = read(socketFD, string, MAX_STR_LEN - 1);
-
     if (n < 0)
     {
         errorHandler("Error while reading the socket\n");
@@ -174,7 +175,7 @@ void sendStuff(int socketFD, char *string)
 {
     int flag;
 
-    memset(string, 0, MAX_STR_LEN);
+    // memset(string, 0, MAX_STR_LEN - 1);
     flag = write(socketFD, string, strlen(string));
     if (flag < 0)
     {

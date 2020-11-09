@@ -153,26 +153,25 @@ void communicate(int socketFD)
     int flag;
     printf("Press CTRL+C to disconnect!\n");
 
-    while (true)
-    {
-        printf("Enter a string: ");
-        scanf("%s", string);
+    // while (true)
+    // {
+    receiveStuff(socketFD, string);
+    printf("[Server]: %s\n", string);
 
-        printf("[Client]: %s\n", string);
-        sendStuff(socketFD, string);
+    printf("Enter a string: ");
+    scanf("%s", string);
+    printf("[Client]: %s\n", string);
 
-        receiveStuff(socketFD, string);
-        printf("[Server]: %s\n", string);
-    }
+    sendStuff(socketFD, string);
+    // }
 }
 
 void receiveStuff(int socketFD, char *string)
 {
     int n;
 
-    // memset(string, 0, MAX_STR_LEN);
+    memset(string, 0, MAX_STR_LEN);
     n = read(socketFD, string, MAX_STR_LEN - 1);
-
     if (n < 0)
     {
         errorHandler("Error while reading the socket\n");
@@ -185,10 +184,7 @@ void sendStuff(int socketFD, char *string)
 {
     int flag;
 
-    memset(string, 0, MAX_STR_LEN);
     flag = write(socketFD, string, strlen(string));
-    close(socketFD);
-
     if (flag < 0)
     {
         errorHandler("Could not write to socket\n");
