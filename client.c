@@ -150,20 +150,21 @@ void preProcess(int argc, char **argv)
 void communicate(int socketFD)
 {
     char string[MAX_STR_LEN];
-    int flag;
-    printf("Press CTRL+C to disconnect!\n");
 
-    // while (true)
-    // {
-    receiveStuff(socketFD, string);
-    printf("[Server]: %s\n", string);
+    printf("\nPress CTRL+C to disconnect!\n\n");
+    while (true)
+    {
+        printf("Enter a string: ");
+        scanf("%s", string);
 
-    printf("Enter a string: ");
-    scanf("%s", string);
-    printf("[Client]: %s\n", string);
+        printf("[Client]: %s\n", string);
+        sendStuff(socketFD, string);
 
-    sendStuff(socketFD, string);
-    // }
+        receiveStuff(socketFD, string);
+        printf("[Server]: %s\n", string);
+    }
+
+    return;
 }
 
 void receiveStuff(int socketFD, char *string)

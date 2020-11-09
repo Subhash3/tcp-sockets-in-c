@@ -26,6 +26,8 @@ void listenForConnections(int serverSocketFd);
 void handleConnection(int clientSocketFd);
 void receiveStuff(int socketFD, char *string);
 void sendStuff(int socketFD, char *string);
+void reverseString(char *str);
+void swap(char *a, char *b);
 
 int main()
 {
@@ -148,10 +150,18 @@ void handleConnection(int clientSocketFd)
 {
     char response[MAX_STR_LEN];
 
-    sendStuff(clientSocketFd, WELCOME_MESSAAGE);
-    receiveStuff(clientSocketFd, response);
-    printf("[Client]: %s\n", response);
+    printf("\n");
 
+    while (true)
+    {
+        receiveStuff(clientSocketFd, response);
+        printf("[Client]: %s\n", response);
+
+        reverseString(response);
+
+        printf("[Server]: %s\n", response);
+        sendStuff(clientSocketFd, response);
+    }
     close(clientSocketFd);
 
     return;
@@ -181,6 +191,29 @@ void sendStuff(int socketFD, char *string)
     {
         errorHandler("Could not write to socket\n");
     }
+
+    return;
+}
+
+void reverseString(char *str)
+{
+    int length = strlen(str);
+
+    for (int i = 0; i < length / 2; i++)
+    {
+        swap(&str[i], &str[length - i - 1]);
+    }
+
+    return;
+}
+
+void swap(char *a, char *b)
+{
+    char temp;
+
+    temp = *a;
+    *a = *b;
+    *b = temp;
 
     return;
 }
