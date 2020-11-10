@@ -24,8 +24,6 @@ void setSocketOptions(int socketFD, int *socketOpt);
 void bindSocket(struct sockaddr_in *address, int socketFD);
 void listenForConnections(int serverSocketFd);
 void handleConnection(int clientSocketFd);
-void receiveStuff(int socketFD, char *string);
-void sendStuff(int socketFD, char *string);
 void reverseString(char *str);
 void swap(char *a, char *b);
 
@@ -161,12 +159,18 @@ void listenForConnections(int serverSocketFd)
 void handleConnection(int clientSocketFd)
 {
     char response[MAX_STR_LEN];
+    bool isResponseValid;
 
     printf("\n");
 
     while (true)
     {
-        receiveStuff(clientSocketFd, response);
+        isResponseValid = receiveStuff(clientSocketFd, response);
+        if (!isResponseValid)
+        {
+            // printf("Socket %d is empty\n", clientSocketFd);
+            break;
+        }
         printf("[Client(%d)]: %s\n", clientSocketFd, response);
 
         reverseString(response);
@@ -175,6 +179,7 @@ void handleConnection(int clientSocketFd)
         sendStuff(clientSocketFd, response);
     }
     close(clientSocketFd);
+    printf("Socket %d connection closed\n", clientSocketFd);
 
     return;
 }
