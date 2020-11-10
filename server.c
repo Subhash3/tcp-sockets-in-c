@@ -23,6 +23,10 @@
 #define PORT 12345
 #define MAX_CONNECTIONS 5
 #define WELCOME_MESSAAGE "Hello from server!\n"
+// #define MAX_FD 1024
+
+// Global variables
+// int socketFDToPIDMap[MAX_FD];
 
 // Function Prototypes
 int initSocket(int *socketOpt, struct sockaddr_in *address);

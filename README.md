@@ -27,4 +27,5 @@ The problem is to implement a client - server user-level application using socke
 - [x] Fork the server and assign the child process to the newly connected client.
 - [x] Check if socket is empty. If so, close the connection.
 - [x] Add signal handlers to handle client disconnections or server crashes.
+- [ ] Identify child processes using client socket FD.
 - [ ] Use threads to work woth clients parallely.
