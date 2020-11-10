@@ -10,9 +10,7 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include "helpers.h"
-
-// All constant definitions
-#define MAX_STR_LEN 256
+#include "./common_socket_functions.h"
 
 // Global variables
 int SERVER_PORT;
@@ -26,8 +24,6 @@ void setupSocketAddress(struct sockaddr_in *address, int socketID);
 void preProcess(int argc, char **argv);
 void connectToServer(int clientSocketFd, struct sockaddr_in *address);
 void communicate(int socketFD);
-void receiveStuff(int socketFD, char *string);
-void sendStuff(int socketFD, char *string);
 
 int main(int argc, char **argv)
 {
@@ -162,33 +158,6 @@ void communicate(int socketFD)
 
         receiveStuff(socketFD, string);
         printf("[Server]: %s\n", string);
-    }
-
-    return;
-}
-
-void receiveStuff(int socketFD, char *string)
-{
-    int n;
-
-    memset(string, 0, MAX_STR_LEN);
-    n = read(socketFD, string, MAX_STR_LEN - 1);
-    if (n < 0)
-    {
-        errorHandler("Error while reading the socket\n");
-    }
-
-    return;
-}
-
-void sendStuff(int socketFD, char *string)
-{
-    int flag;
-
-    flag = write(socketFD, string, strlen(string));
-    if (flag < 0)
-    {
-        errorHandler("Could not write to socket\n");
     }
 
     return;

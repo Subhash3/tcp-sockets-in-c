@@ -10,12 +10,12 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include "helpers.h"
+#include "./common_socket_functions.h"
 
 // All constant definitions
 #define PORT 12345
 #define MAX_CONNECTIONS 5
 #define WELCOME_MESSAAGE "Hello from server!\n"
-#define MAX_STR_LEN 256
 
 // Function Prototypes
 int initSocket(int *socketOpt, struct sockaddr_in *address);
@@ -62,7 +62,7 @@ int createSocket()
         errorHandler("Couldn't create a socket\n");
         exit(errno);
     }
-    printf("Server socket created.\n");
+    printf("Server socket created. FD: %d\n", socketFD);
 
     return socketFD;
 }
@@ -167,42 +167,14 @@ void handleConnection(int clientSocketFd)
     while (true)
     {
         receiveStuff(clientSocketFd, response);
-        printf("[Client]: %s\n", response);
+        printf("[Client(%d)]: %s\n", clientSocketFd, response);
 
         reverseString(response);
 
-        printf("[Server]: %s\n", response);
+        printf("[Server(%d)]: %s\n", clientSocketFd, response);
         sendStuff(clientSocketFd, response);
     }
     close(clientSocketFd);
-
-    return;
-}
-
-void receiveStuff(int socketFD, char *string)
-{
-    int n;
-
-    memset(string, 0, MAX_STR_LEN);
-    n = read(socketFD, string, MAX_STR_LEN - 1);
-    if (n < 0)
-    {
-        errorHandler("Error while reading the socket\n");
-    }
-
-    return;
-}
-
-void sendStuff(int socketFD, char *string)
-{
-    int flag;
-
-    // memset(string, 0, MAX_STR_LEN - 1);
-    flag = write(socketFD, string, strlen(string));
-    if (flag < 0)
-    {
-        errorHandler("Could not write to socket\n");
-    }
 
     return;
 }

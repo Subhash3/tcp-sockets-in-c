@@ -25,4 +25,5 @@ The problem is to implement a client - server user-level application using socke
 - [x] One to One communication.
 - [x] String Reversal.
 - [x] Fork the server and assign the child process to the newly connected client.
+- [ ] Add signal handlers to handle client disconnections or server crashes.
 - [ ] Use threads to work woth clients parallely.
