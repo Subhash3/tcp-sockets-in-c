@@ -9,8 +9,15 @@
 #include <stdbool.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <signal.h>
 #include "helpers.h"
 #include "./common_socket_functions.h"
+
+// typedef struct
+// {
+//     int socketFD;
+//     int pid;
+// } User;
 
 // All constant definitions
 #define PORT 12345
@@ -26,6 +33,7 @@ void listenForConnections(int serverSocketFd);
 void handleConnection(int clientSocketFd);
 void reverseString(char *str);
 void swap(char *a, char *b);
+void sigChildHandler(int sig);
 
 int main()
 {
@@ -33,6 +41,7 @@ int main()
     struct sockaddr_in serverAddress;
     int serverSocketFd = initSocket(&socketOpt, &serverAddress);
 
+    signal(SIGCHLD, sigChildHandler);
     listenForConnections(serverSocketFd);
 
     exit(0);
@@ -181,7 +190,7 @@ void handleConnection(int clientSocketFd)
     close(clientSocketFd);
     printf("Socket %d connection closed\n", clientSocketFd);
 
-    return;
+    exit(0);
 }
 
 void reverseString(char *str)
@@ -203,6 +212,13 @@ void swap(char *a, char *b)
     temp = *a;
     *a = *b;
     *b = temp;
+
+    return;
+}
+
+void sigChildHandler(int sig)
+{
+    printf("Caught SIGCHILD (%d)\n", sig);
 
     return;
 }
