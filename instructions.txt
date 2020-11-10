@@ -1,0 +1,46 @@
+COMPILATION
+===========
+    - This folder contains a makefile.
+    - Install make utility and just type 'make' to generate compiled binaries.
+                (OR)
+    - Do the following manually.
+        gcc -Wall helpers.c -c
+        gcc -Wall common_socket_functions.c -c
+        gcc -Wall client.c helpers.o common_socket_functions.o -o client
+        gcc -Wall server.c helpers.o common_socket_functions.o -o server
+
+    - After compilation, two binaries get created namely 'client' and 'server'.
+
+Execution
+=========
+    - Open two terminals.
+    Server
+    ======
+        - First run server in a terminal by typing './server' in that terminal.
+        - The above command starts the server on port 12345.
+        - Press ctrl+c to disconnect from the server.
+    Client
+    ======
+    - Then run client in another terminal by typing './client <SERVER_IP> <SERVER_PORT>'
+    - In our case SERVER_IP and SERVER_PORT are localhost(127.0.0.1) and 12345 respectively.
+    - Hence out final command looks like './client 127.0.0.1 12345'
+    - Press ctrl+c to stop the server.
+
+
+Input/Output Format
+===================
+    Client
+    ======
+        - After the connection is established, we'll be asked to enter a string.
+        - Enter a string and press enter.
+        - This will display the entered string in the following manner.
+            [Client]: <entered-string>
+            [Server]: <reversed-string>
+
+    Server
+    ======
+        - After the connection is established, a unique socket file descriptor will be assigned to the client.
+        - When it receives a string from the client, it will display in the following manner.
+         [Client(FD)]: <given-string>
+         [Server(FD)]: <reversed-string>
+            Where FD is the file descriptor of that particular socket of that client.

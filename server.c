@@ -68,7 +68,7 @@ void listenForConnections(int serverSocketFd)
 
         clientSocketFd = accept(serverSocketFd, (struct sockaddr *)&addr, &addressLength);
         inet_ntop(AF_INET, &addr, clientAddress, MAX_STR_LEN);
-        printf("[+] Connection Established. Client Address: %s, socket FD: %d\n", clientAddress, clientSocketFd);
+        printf("[+] Connection Established. Client socket FD: %d\n", clientSocketFd);
         printf("[*] Spawning a child process for this client\n");
 
         // Create a child process for that client
