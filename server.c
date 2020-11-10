@@ -20,7 +20,6 @@
 // } User;
 
 // All constant definitions
-#define PORT 12345
 #define MAX_CONNECTIONS 5
 #define WELCOME_MESSAAGE "Hello from server!\n"
 // #define MAX_FD 1024
@@ -29,10 +28,6 @@
 // int socketFDToPIDMap[MAX_FD];
 
 // Function Prototypes
-int initSocket(int *socketOpt, struct sockaddr_in *address);
-int createSocket();
-void setSocketOptions(int socketFD, int *socketOpt);
-void bindSocket(struct sockaddr_in *address, int socketFD);
 void listenForConnections(int serverSocketFd);
 void handleConnection(int clientSocketFd);
 void reverseString(char *str);
@@ -43,91 +38,12 @@ int main()
 {
     int socketOpt = 1;
     struct sockaddr_in serverAddress;
-    int serverSocketFd = initSocket(&socketOpt, &serverAddress);
+    int serverSocketFd = initSocket(&socketOpt, &serverAddress, true);
 
     signal(SIGCHLD, sigChildHandler);
     listenForConnections(serverSocketFd);
 
     exit(0);
-}
-
-int initSocket(int *socketOpt, struct sockaddr_in *address)
-{
-    int socketFD, flag;
-
-    socketFD = createSocket();
-    setSocketOptions(socketFD, socketOpt);
-    bindSocket(address, socketFD);
-
-    return socketFD;
-}
-
-int createSocket()
-{
-    int socketFD;
-
-    printf("Creating socket..\n");
-    socketFD = socket(AF_INET, SOCK_STREAM, 0);
-    if (socketFD < 0)
-    {
-        errorHandler("Couldn't create a socket\n");
-        exit(errno);
-    }
-    printf("Server socket created. FD: %d\n", socketFD);
-
-    return socketFD;
-}
-
-void setSocketOptions(int socketFD, int *socketOpt)
-{
-    int flag;
-
-    printf("Setting socket options...\n");
-    flag = setsockopt(socketFD, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, socketOpt, sizeof(*socketOpt));
-
-    switch (flag)
-    {
-    case EBADF:
-        errorHandler("Invalid File (Socket) Descriptor.\n");
-        break;
-    case EFAULT:
-        errorHandler("Invalid Socket Options.\n");
-    case EINVAL:
-        break;
-    case ENOPROTOOPT:
-        errorHandler("Unknows socket option at the indicated level.\n");
-        break;
-    case ENOTSOCK:
-        errorHandler("Given File descriptor is not a valid socket.\n");
-        break;
-    default:
-        printf("Socket options have been set!\n");
-        return;
-    }
-
-    exit(errno);
-}
-
-void bindSocket(struct sockaddr_in *address, int socketFD)
-{
-    int flag;
-
-    printf("Binding socket...\n");
-    bzero(address, sizeof(*address));
-
-    (*address).sin_family = AF_INET;
-    (*address).sin_addr.s_addr = htonl(INADDR_ANY);
-    (*address).sin_port = htons(PORT);
-
-    flag = bind(socketFD, (struct sockaddr *)address, sizeof(*address));
-    if (flag < 0)
-    {
-        errorHandler("Coudn't bind socket\n");
-        exit(errno);
-    }
-    printf("Socket Bound successfully.\n");
-
-    return;
 }
 
 void listenForConnections(int serverSocketFd)
@@ -191,7 +107,8 @@ void handleConnection(int clientSocketFd)
         printf("[Server(%d)]: %s\n", clientSocketFd, response);
         sendStuff(clientSocketFd, response);
     }
-    close(clientSocketFd);
+    // close(clientSocketFd);
+    shutdown(clientSocketFd, SHUT_RDWR);
     printf("Socket %d connection closed\n", clientSocketFd);
 
     exit(0);

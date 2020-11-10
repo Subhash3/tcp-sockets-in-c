@@ -12,15 +12,7 @@
 #include "helpers.h"
 #include "./common_socket_functions.h"
 
-// Global variables
-int SERVER_PORT;
-char SERVER_IP[MAX_STR_LEN];
-
 // Function Prototypes
-int initSocket(int *socketOpt, struct sockaddr_in *address);
-int createSocket();
-void setSocketOptions(int socketID, int *socketOpt);
-void setupSocketAddress(struct sockaddr_in *address, int socketID);
 void preProcess(int argc, char **argv);
 void connectToServer(int clientSocketFd, struct sockaddr_in *address);
 void communicate(int socketFD);
@@ -30,89 +22,12 @@ int main(int argc, char **argv)
     preProcess(argc, argv);
     int socketOpt = 1;
     struct sockaddr_in serverAddress;
-    int socketFd = initSocket(&socketOpt, &serverAddress);
+    int socketFd = initSocket(&socketOpt, &serverAddress, false);
 
     connectToServer(socketFd, &serverAddress);
     communicate(socketFd);
 
     exit(0);
-}
-
-int initSocket(int *socketOpt, struct sockaddr_in *address)
-{
-    int socketID, flag;
-
-    socketID = createSocket();
-    setSocketOptions(socketID, socketOpt);
-    setupSocketAddress(address, socketID);
-
-    return socketID;
-}
-
-int createSocket()
-{
-    int socketID;
-
-    printf("[*] Creating socket..\n");
-    socketID = socket(AF_INET, SOCK_STREAM, 0);
-    if (socketID < 0)
-    {
-        errorHandler("Couldn't create a socket\n");
-        exit(errno);
-    }
-    printf("[+] Server socket created.\n");
-
-    return socketID;
-}
-
-void setSocketOptions(int socketID, int *socketOpt)
-{
-    int flag;
-
-    printf("[*] Setting socket options...\n");
-    flag = setsockopt(socketID, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, socketOpt, sizeof(*socketOpt));
-
-    switch (flag)
-    {
-    case EBADF:
-        errorHandler("Invalid File (Socket) Descriptor.\n");
-        break;
-    case EFAULT:
-        errorHandler("Invalid Socket Options.\n");
-    case EINVAL:
-        break;
-    case ENOPROTOOPT:
-        errorHandler("Unknows socket option at the indicated level.\n");
-        break;
-    case ENOTSOCK:
-        errorHandler("Given File descriptor is not a valid socket.\n");
-        break;
-    default:
-        printf("[+] Socket options have been set!\n");
-        return;
-    }
-
-    exit(errno);
-}
-
-void setupSocketAddress(struct sockaddr_in *address, int socketID)
-{
-    int flag;
-
-    printf("[*] Setting socket address...\n");
-    bzero(address, sizeof(*address));
-
-    (*address).sin_family = AF_INET;
-    (*address).sin_port = htons(SERVER_PORT);
-
-    flag = inet_pton(AF_INET, (const char *)SERVER_IP, &((*address).sin_addr));
-    if (flag < 0)
-    {
-        errorHandler("inet_pton() failed. Please check the provided IP: %s\n", SERVER_IP);
-    }
-    printf("[+] Setup socket to %s:%d\n", SERVER_IP, SERVER_PORT);
-
-    return;
 }
 
 void connectToServer(int clientSocketFd, struct sockaddr_in *address)
