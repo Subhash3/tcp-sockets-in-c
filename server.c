@@ -51,7 +51,7 @@ void listenForConnections(int serverSocketFd)
     int flag, clientSocketFd;
     int pid;
 
-    printf("listening for connections...\n");
+    printf("[*] Listening for connections...\n");
 
     flag = listen(serverSocketFd, MAX_CONNECTIONS);
     if (flag < 0)
@@ -68,7 +68,8 @@ void listenForConnections(int serverSocketFd)
 
         clientSocketFd = accept(serverSocketFd, (struct sockaddr *)&addr, &addressLength);
         inet_ntop(AF_INET, &addr, clientAddress, MAX_STR_LEN);
-        printf("Connection Established. Client Address: %s, socket FD: %d\n", clientAddress, clientSocketFd);
+        printf("[+] Connection Established. Client Address: %s, socket FD: %d\n", clientAddress, clientSocketFd);
+        printf("[*] Spawning a child process for this client\n");
 
         // Create a child process for that client
         pid = fork();
@@ -79,7 +80,7 @@ void listenForConnections(int serverSocketFd)
         else if (pid == 0)
         {
             // Child process
-            printf("Child process: FD: %d\n", clientSocketFd);
+            printf("[+] Child has been created. Client socketFD: %d\n", clientSocketFd);
             handleConnection(clientSocketFd);
         }
     }

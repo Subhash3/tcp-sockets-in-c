@@ -11,14 +11,14 @@ int createSocket()
 {
     int socketFD;
 
-    printf("Creating socket..\n");
+    printf("[*] Creating socket..\n");
     socketFD = socket(AF_INET, SOCK_STREAM, 0);
     if (socketFD < 0)
     {
         errorHandler("Couldn't create a socket\n");
         exit(errno);
     }
-    printf("Server socket created. FD: %d\n", socketFD);
+    printf("[+] Server socket created. FD: %d\n", socketFD);
 
     return socketFD;
 }
@@ -27,7 +27,7 @@ void setSocketOptions(int socketFD, int *socketOpt)
 {
     int flag;
 
-    printf("Setting socket options...\n");
+    printf("[*] Setting socket options...\n");
     flag = setsockopt(socketFD, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, socketOpt, sizeof(*socketOpt));
 
     switch (flag)
@@ -46,7 +46,7 @@ void setSocketOptions(int socketFD, int *socketOpt)
         errorHandler("Given File descriptor is not a valid socket.\n");
         break;
     default:
-        printf("Socket options have been set!\n");
+        printf("[+] Socket options have been set!\n");
         return;
     }
 
@@ -79,7 +79,7 @@ void bindSocket(struct sockaddr_in *address, int socketFD)
 {
     int flag;
 
-    printf("Binding socket...\n");
+    printf("[*] Binding socket...\n");
     bzero(address, sizeof(*address));
 
     (*address).sin_family = AF_INET;
@@ -92,7 +92,7 @@ void bindSocket(struct sockaddr_in *address, int socketFD)
         errorHandler("Coudn't bind socket\n");
         exit(errno);
     }
-    printf("Socket Bound successfully.\n");
+    printf("[+] Socket Bound successfully.\n");
 
     return;
 }
